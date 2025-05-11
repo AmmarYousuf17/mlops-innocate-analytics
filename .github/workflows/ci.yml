@@ -40,11 +40,13 @@ jobs:
 
     - name: Authenticate to Google Drive
       run: |
+        echo "${{ secrets.GDRIVE_SERVICE_ACCOUNT_JSON }}" > /tmp/gdrive-service-account.json
+        dvc remote modify myremote gdrive_service_account_json_file_path /tmp/gdrive-service-account.json
         dvc pull
 
     - name: Run tests
       run: |
-        pytest
+        pytest tests/ --maxfail=1 --disable-warnings -q
 
     - name: Push data to Google Drive
       run: |
