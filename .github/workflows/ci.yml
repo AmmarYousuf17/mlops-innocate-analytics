@@ -25,7 +25,23 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install dvc[gdrive]
 
-    - name: Run Tests
+    - name: Install AWS CLI (for remote storage, optional)
+      run: |
+        curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+
+    - name: Authenticate to Google Drive
+      run: |
+        dvc remote modify myremote gdrive_use_service_account true
+        dvc pull
+
+    - name: Run tests
       run: |
         pytest
+
+    - name: Push data to Google Drive
+      run: |
+        dvc push
